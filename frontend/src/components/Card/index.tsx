@@ -8,7 +8,7 @@ import {
   Description,
 } from "./style";
 import CardModal from "../CardModal";
-import { createRef, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Avatar from "../Avatar";
 
 export default function Card({
@@ -27,7 +27,13 @@ export default function Card({
 
   return (
     <>
-      <CardModal isOpen={isOpen} setIsOpen={setIsOpen} isNew={false} />
+      <CardModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        isNew={false}
+        handleAccept={() => {}}
+        handleDelete={() => {}}
+      />
       <MainContainer onClick={handleCardClick}>
         <Avatar seed={seed.current} />
         <TextContainer>
