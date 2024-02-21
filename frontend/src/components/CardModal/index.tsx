@@ -148,7 +148,6 @@ const Title = styled.h4`
 `;
 
 const StyledText = styled.div`
-  word-break: break-all;
   ${textStyles.body1}
   width:100%;
 `;

@@ -13,6 +13,7 @@ class Database {
 
   openDb = () => {
     const dbPath = path.resolve(__dirname, "db/db.sqlite3");
+    const schemaPath = path.resolve(__dirname, "db/schema.sql");
 
     if (fs.existsSync(dbPath)) {
       this.db = new sqlite3.Database(dbPath, (err) => {
@@ -30,23 +31,16 @@ class Database {
             console.log("[server]: Database connection error ", err.message);
           }
           console.log("[server]: Database created.");
+          console.log("[server]: Database conected.");
         }
       );
+      const schema = fs.readFileSync(schemaPath, {
+        encoding: "utf8",
+        flag: "r",
+      });
+      console.log(schema);
       this.db.serialize(() => {
-        this.db?.run(`CREATE TABLE blogPost (
-          id INTEGER PRIMARY KEY NOT NULL,
-          title STRING NOT NULL,
-          author STRING NOT NULL,
-          post_date DATE NOT NULL,
-          content TEXT NOT NULL
-        );`);
-        this.db?.run(`INSERT INTO blogPost (title, author, post_date, content)
-        VALUES (
-            "test title",
-            "test author",
-            "01/01/2024",
-            "test content"
-          );`);
+        this.db?.exec(schema);
       });
     }
   };
