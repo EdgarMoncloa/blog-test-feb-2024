@@ -38,7 +38,6 @@ class Database {
         encoding: "utf8",
         flag: "r",
       });
-      console.log(schema);
       this.db.serialize(() => {
         this.db?.exec(schema);
       });
