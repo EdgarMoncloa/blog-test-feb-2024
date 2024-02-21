@@ -39,7 +39,7 @@ export const TextContainer = styled.div`
 `;
 
 export const Title = styled.div`
-  ${textStyles.h6}
+  ${textStyles.body1}
 `;
 
 export const SecondRowContainer = styled.div`
@@ -48,15 +48,15 @@ export const SecondRowContainer = styled.div`
 `;
 
 export const Author = styled.div`
-  ${textStyles.body2}
+  ${textStyles.overline}
 `;
 
 export const StyledDate = styled.div`
-  ${textStyles.body2}
+  ${textStyles.overline}
 `;
 
 export const Content = styled.div`
   word-break: break-all;
   width: 100%;
-  ${textStyles.body1}
+  ${textStyles.body2}
 `;
