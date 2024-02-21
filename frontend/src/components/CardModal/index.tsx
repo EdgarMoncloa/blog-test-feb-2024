@@ -4,6 +4,7 @@ import textStyles from "../../tokens/textStyle";
 import { createRef, useState } from "react";
 import CustomInput from "../CustomInput";
 import CustomButton from "../CustomButton.tsx";
+import Avatar from "../Avatar/index.tsx";
 
 export type cardModalValues = {
   author: string;
@@ -55,7 +56,7 @@ export default function CardModal({
       <ContentContainer>
         <Title>{customTitle || "Agregar nueva entrada"}</Title>
         <CustomInput
-          placeholder="Titulo"
+          placeholder="Título"
           value={authorVal}
           setValue={setAuthorVal}
         />
@@ -65,7 +66,8 @@ export default function CardModal({
           setValue={setTitleVal}
         />
         <CustomInput
-          placeholder="Descripcion"
+          placeholder="Descripción"
+          type="textarea"
           value={contentVal}
           setValue={setContentVal}
         />
@@ -100,8 +102,8 @@ export default function CardModal({
     ModalContent = (
       <ContentContainer>
         <Title>{title}</Title>
-        <StyledText>{author}</StyledText>
-        <StyledText>{date}</StyledText>
+        <StyledText>Autor:{author}</StyledText>
+        <StyledText>Fecha de publicación:{date}</StyledText>
         <StyledText>{content}</StyledText>
         <ButtonsContainer>
           <CustomButton handleClick={() => setIsOpen(false)} text="Regresar" />
