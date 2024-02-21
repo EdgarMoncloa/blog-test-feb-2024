@@ -1,25 +1,44 @@
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import textStyles from "../../tokens/textStyle";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import CustomInput from "../CustomInput";
 import CustomButton from "../CustomButton.tsx";
+
+export type cardModalValues = {
+  author: string;
+  title: string;
+  date?: string;
+  content: string;
+};
 
 type CardModalProps = {
   isOpen: boolean;
   isNew: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAccept: () => void;
-  handleDelete: () => void;
+  handleAccept: (values: cardModalValues) => void;
+  author?: string;
+  title?: string;
+  date?: string;
+  content?: string;
+  customTitle?: string | null;
 };
 export default function CardModal({
   isOpen,
   isNew = false,
   setIsOpen,
   handleAccept,
-  handleDelete,
+  author,
+  title,
+  date,
+  content,
+  customTitle,
 }: CardModalProps) {
   const backgroundModalRef = createRef<HTMLDivElement>();
+
+  const [authorVal, setAuthorVal] = useState<string>(author || "");
+  const [titleval, setTitleVal] = useState<string>(title || "");
+  const [contentVal, setContentVal] = useState<string>(content || "");
 
   const handleModalExit: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (
@@ -34,17 +53,45 @@ export default function CardModal({
   if (isNew === true) {
     ModalContent = (
       <ContentContainer>
-        <Title>Agregar nueva entrada</Title>
-        <CustomInput defaultValue={"Title"} />
-        <CustomInput defaultValue={"Autor"} />
-        <CustomInput defaultValue={"Fecha"} />
-        <CustomInput defaultValue={"Descripcion"} />
+        <Title>{customTitle || "Agregar nueva entrada"}</Title>
+        <CustomInput
+          placeholder="Titulo"
+          value={authorVal}
+          setValue={setAuthorVal}
+        />
+        <CustomInput
+          placeholder="Autor"
+          value={titleval}
+          setValue={setTitleVal}
+        />
+        <CustomInput
+          placeholder="Descripcion"
+          value={contentVal}
+          setValue={setContentVal}
+        />
         <ButtonsContainer>
-          <CustomButton handleClick={handleAccept} text="Guardar" />
           <CustomButton
-            handleClick={handleDelete}
+            handleClick={() => {
+              setAuthorVal("");
+              setTitleVal("");
+              setContentVal("");
+              handleAccept({
+                author: authorVal,
+                title: titleval,
+                content: contentVal,
+              });
+            }}
+            text="Guardar"
+          />
+          <CustomButton
+            handleClick={() => {
+              setAuthorVal("");
+              setTitleVal("");
+              setContentVal("");
+              setIsOpen(false);
+            }}
             isOutlined={true}
-            text="Eliminar"
+            text="Cancelar"
           />
         </ButtonsContainer>
       </ContentContainer>
@@ -52,17 +99,12 @@ export default function CardModal({
   } else {
     ModalContent = (
       <ContentContainer>
-        <Title>Title</Title>
-        <StyledText>Autor</StyledText>
-        <StyledText>Fecha</StyledText>
-        <StyledText>Descripcion</StyledText>
+        <Title>{title}</Title>
+        <StyledText>{author}</StyledText>
+        <StyledText>{date}</StyledText>
+        <StyledText>{content}</StyledText>
         <ButtonsContainer>
-          <CustomButton handleClick={handleAccept} text="Regresar" />
-          <CustomButton
-            handleClick={handleDelete}
-            isOutlined={true}
-            text="Eliminar"
-          />
+          <CustomButton handleClick={() => setIsOpen(false)} text="Regresar" />
         </ButtonsContainer>
       </ContentContainer>
     );
@@ -104,6 +146,7 @@ const Title = styled.h4`
 `;
 
 const StyledText = styled.div`
+  word-break: break-all;
   ${textStyles.body1}
   width:100%;
 `;

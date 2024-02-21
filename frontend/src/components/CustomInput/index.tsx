@@ -1,26 +1,29 @@
-import { useState } from "react";
 import styled from "styled-components";
 
-export default function CustomInput({ defaultValue = "" }) {
-  const [value, setValue] = useState<string>(defaultValue);
-
+type customInputProps = {
+  placeholder: string;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  type?: string;
+};
+export default function CustomInput({
+  placeholder,
+  value,
+  setValue,
+  type = "text",
+}: customInputProps) {
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
   ) => {
     setValue(event.target.value);
   };
 
-  const handleInputFocus: React.FocusEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    event.target.select();
-  };
-
   return (
     <StyledInput
+      type={type}
+      placeholder={placeholder}
       value={value}
       onChange={handleInputChange}
-      onFocus={handleInputFocus}
     />
   );
 }
@@ -30,7 +33,7 @@ const StyledInput = styled.input`
   border: none;
   height: 48px;
   outline: none;
-  padding-left: 16px;
+  padding: 0 16px;
   width: 100%;
 
   &:focus {

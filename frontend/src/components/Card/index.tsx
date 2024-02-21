@@ -5,20 +5,21 @@ import {
   SecondRowContainer,
   Author,
   StyledDate,
-  Description,
+  Content,
 } from "./style";
 import CardModal from "../CardModal";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Avatar from "../Avatar";
 
-export default function Card({
-  title = "title",
-  author = "author",
-  date = "date",
-  description = "description",
-}) {
-  const seed = useRef<number>(Math.random() * (1000 - 1) + 1);
+type cardType = {
+  id: string;
+  title: string;
+  author: string;
+  date: string;
+  content: string;
+};
 
+export default function Card({ id, title, author, date, content }: cardType) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCardClick = () => {
@@ -32,17 +33,22 @@ export default function Card({
         setIsOpen={setIsOpen}
         isNew={false}
         handleAccept={() => {}}
-        handleDelete={() => {}}
+        author={author}
+        title={title}
+        date={date}
+        content={content}
       />
       <MainContainer onClick={handleCardClick}>
-        <Avatar seed={seed.current} />
+        <Avatar seed={id} />
         <TextContainer>
           <Title>{title}</Title>
           <SecondRowContainer>
             <Author>{author}</Author>
             <StyledDate>{date}</StyledDate>
           </SecondRowContainer>
-          <Description>{description}</Description>
+          <Content>
+            {content.length > 70 ? content.slice(0, 70) + "..." : content}
+          </Content>
         </TextContainer>
       </MainContainer>
     </>

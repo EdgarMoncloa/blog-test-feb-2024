@@ -1,13 +1,16 @@
 import styled from "styled-components";
 
 type avatarTypes = {
-  seed: number;
+  seed: string;
 };
 export default function Avatar({ seed }: avatarTypes) {
   return (
     <AvatarContainer>
       <StyledAvatar
-        avatarUrl={`https://api.dicebear.com/7.x/bottts/svg/seed=${seed}`}
+        avatarurl={`https://api.dicebear.com/7.x/bottts/svg/seed=${seed?.replace(
+          " ",
+          "_"
+        )}`}
       />
     </AvatarContainer>
   );
@@ -21,11 +24,11 @@ export const AvatarContainer = styled.div`
   display: flex;
 `;
 
-export const StyledAvatar = styled.div<{ avatarUrl: string }>`
+export const StyledAvatar = styled.div<{ avatarurl: string }>`
   width: 52px;
   height: 52px;
   border-radius: 50px;
   background-color: var(--color-secondary-400);
-  background-image: url(${(p) => p.avatarUrl});
+  background-image: url(${(p) => p.avatarurl});
   margin: auto;
 `;

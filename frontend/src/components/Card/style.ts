@@ -55,6 +55,8 @@ export const StyledDate = styled.div`
   ${textStyles.body2}
 `;
 
-export const Description = styled.div`
+export const Content = styled.div`
+  word-break: break-all;
+  width: 100%;
   ${textStyles.body1}
 `;

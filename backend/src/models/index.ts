@@ -2,66 +2,98 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import fs from "fs";
 import path from "path";
-// const sqlite3 = require("sqlite3").verbose();
 
-// export async function openDb() {
-//   const dbPath = path.resolve(__dirname, "db/db.sqlite");
-//   const db = new sqlite3.Database(dbPath);
-
-//   if (!fs.existsSync(dbPath)) {
-//     const schemaPath = path.resolve(__dirname, "db/schema.sql");
-//     db.serialize(() => {
-//       const lines = fs
-//         .readFileSync(schemaPath, "utf8")
-//         .split("\n")
-//         .filter((x: any) => x);
-//       for (var i = 0; i < lines.length; i++) {
-//         if (lines[i].indexOf("sqlite_sequence") > -1) {
-//           continue;
-//         }
-//         db.run(lines[i]);
-//       }
-//     });
-//   }
-//   return open({
-//     filename: dbPath,
-//     driver: sqlite3.Database,
-//   });
-// }
-
-class db {
+class Database {
   db: sqlite3.Database | null;
   constructor() {
     this.db = null;
   }
 
-  openDb = () => {
-    const dbPath = path.resolve(__dirname, "db/db.sqlite");
-    this.db = new sqlite3.Database(dbPath);
+  // get
 
-    if (!fs.existsSync(dbPath)) {
-      const schemaPath = path.resolve(__dirname, "db/schema.sql");
-      this.db.serialize(() => {
-        const lines = fs
-          .readFileSync(schemaPath, "utf8")
-          .split("\n")
-          .filter((x: any) => x);
-        for (var i = 0; i < lines.length; i++) {
-          if (lines[i].indexOf("sqlite_sequence") > -1) {
-            continue;
-          }
-          if (this.db !== null) this.db.run(lines[i]);
+  openDb = () => {
+    const dbPath = path.resolve(__dirname, "db/db.sqlite3");
+
+    if (fs.existsSync(dbPath)) {
+      this.db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+          console.log("[server]: Database connection error ", err.message);
         }
+        console.log("[server]: Database conected.");
+      });
+    } else {
+      this.db = new sqlite3.Database(
+        dbPath,
+        sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+        (err) => {
+          if (err) {
+            console.log("[server]: Database connection error ", err.message);
+          }
+          console.log("[server]: Database created.");
+        }
+      );
+      this.db.serialize(() => {
+        this.db?.run(`CREATE TABLE blogPost (
+          id INTEGER PRIMARY KEY NOT NULL,
+          title STRING NOT NULL,
+          author STRING NOT NULL,
+          post_date DATE NOT NULL,
+          content TEXT NOT NULL
+        );`);
+        this.db?.run(`INSERT INTO blogPost (title, author, post_date, content)
+        VALUES (
+            "test title",
+            "test author",
+            "01/01/2024",
+            "test content"
+          );`);
       });
     }
-    return open({
-      filename: dbPath,
-      driver: sqlite3.Database,
+  };
+  closeDb = () => {
+    if (this.db === null) return;
+    this.db.close((err) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log("[server]: Closed the database connection.");
+    });
+  };
+  getBlogPosts = async () => {
+    return new Promise((res, rej) => {
+      this.db?.all("SELECT * FROM blogPost", (err, rows) => {
+        if (err) {
+          console.log(`[server]: error in sql query: ${err}`);
+          rej(err);
+        }
+        res(rows);
+      });
+    });
+  };
+  createBlogPost = async (
+    title: string,
+    author: string,
+    post_date: string,
+    content: string
+  ) => {
+    return new Promise((res, rej) => {
+      if (this.db === null) return rej("no database started");
+      this.db.run(
+        `INSERT INTO blogpost(title, author, post_date, content) VALUES(?,?,?,?)`,
+        [title, author, post_date, content],
+        function (err) {
+          if (err) {
+            console.log(`[server]: db error`, err.message);
+            rej("Error inserting post");
+            return;
+          }
+          res(this.lastID);
+        }
+      );
     });
   };
 }
 
-const dbInstance = new db();
-await dbInstance.openDb();
+const db = new Database();
 
-export default new db
+export default db;

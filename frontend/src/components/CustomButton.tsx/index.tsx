@@ -3,19 +3,16 @@ import styled, { css } from "styled-components";
 type customButtonProps = {
   text: string;
   isOutlined?: boolean;
-  handleClick: () => void;
+  handleClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 export default function CustomButton({
   text,
   isOutlined = false,
   handleClick,
 }: customButtonProps) {
-  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = () => {
-    handleClick();
-  };
   return (
     <>
-      <MainContainer onClick={handleButtonClick} isOutlined={isOutlined}>
+      <MainContainer onClick={handleClick} isOutlined={isOutlined}>
         {text}
       </MainContainer>
     </>
